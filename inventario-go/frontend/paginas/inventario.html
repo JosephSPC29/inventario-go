@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/inventory')
+                .then(response => response.json())
+                .then(data => {
+                    const inventoryList = document.getElementById('inventory-list');
+                    data.forEach(item => {
+                        const listItem = document.createElement('li');
+                        listItem.innerHTML = `Product ID: ${item.product_id}, Quantity: ${item.quantity}, Location: ${item.location}, Price: ${item.price}`;
+                        inventoryList.appendChild(listItem);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching inventory:', error);
+                });
+
+            document.getElementById('inventory-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const productId = document.getElementById('product-id').value;
+                const quantity = document.getElementById('quantity').value;
+                const location = document.getElementById('location').value;
+                const price = document.getElementById('price').value;
+
+                const inventoryData = {
+                    product_id: parseInt(productId),
+                    quantity: parseInt(quantity),
+                    location: location,
+                    price: parseFloat(price),
+                };
+
+                fetch('/inventory', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(inventoryData),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Inventory item created successfully!');
+                    const inventoryList = document.getElementById('inventory-list');
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `Product ID: ${productId}, Quantity: ${quantity}, Location: ${location}, Price: ${price}`;
+                    inventoryList.appendChild(listItem);
+                    document.getElementById('inventory-form').reset();
+                })
+                .catch(error => {
+                    console.error('Error creating inventory:', error);
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Inventory List</h1>
+
+    <ul id="inventory-list">
+    </ul>
+
+    <h2>Create an Inventory Item</h2>
+    <form id="inventory-form">
+        <label for="product-id">Product ID</label>
+        <input type="number" id="product-id" required>
+
+        <label for="quantity">Quantity</label>
+        <input type="number" id="quantity" required>
+
+        <label for="location">Location</label>
+        <input type="text" id="location" required>
+
+        <label for="price">Price</label>
+        <input type="number" id="price" required step="0.01">
+
+        <button type="submit">Add Inventory</button>
+    </form>
+
+    <script src="/static/js/script.js"></script>
+</body>
+</html>

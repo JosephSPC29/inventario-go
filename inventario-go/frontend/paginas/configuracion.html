@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuration</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/config/system')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('inventory_threshold').value = data.inventory_threshold;
+                    document.getElementById('notification_enabled').checked = data.notification_enabled;
+                    document.getElementById('notification_email').value = data.notification_email;
+                    document.getElementById('notification_frequency').value = data.notification_frequency;
+                    document.getElementById('default_currency').value = data.default_currency;
+                })
+                .catch(error => {
+                    console.error('Error fetching system config:', error);
+                });
+
+            fetch('/config/inventory')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('reorder_level').value = data.reorder_level;
+                    document.getElementById('automatic_stock_updates').checked = data.automatic_stock_updates;
+                    document.getElementById('stock_warning_enabled').checked = data.stock_warning_enabled;
+                    document.getElementById('stock_warning_threshold').value = data.stock_warning_threshold;
+                })
+                .catch(error => {
+                    console.error('Error fetching inventory config:', error);
+                });
+
+            document.getElementById('system-config-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const configData = {
+                    inventory_threshold: document.getElementById('inventory_threshold').value,
+                    notification_enabled: document.getElementById('notification_enabled').checked,
+                    notification_email: document.getElementById('notification_email').value,
+                    notification_frequency: document.getElementById('notification_frequency').value,
+                    default_currency: document.getElementById('default_currency').value
+                };
+
+                fetch('/config/system', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(configData)
+                })
+                .then(response => response.json())
+                .then(data => alert('System configuration updated!'))
+                .catch(error => console.error('Error updating system config:', error));
+            });
+
+            document.getElementById('inventory-config-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const inventoryData = {
+                    reorder_level: document.getElementById('reorder_level').value,
+                    automatic_stock_updates: document.getElementById('automatic_stock_updates').checked,
+                    stock_warning_enabled: document.getElementById('stock_warning_enabled').checked,
+                    stock_warning_threshold: document.getElementById('stock_warning_threshold').value
+                };
+
+                fetch('/config/inventory', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(inventoryData)
+                })
+                .then(response => response.json())
+                .then(data => alert('Inventory configuration updated!'))
+                .catch(error => console.error('Error updating inventory config:', error));
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>System Configuration</h1>
+    <form id="system-config-form">
+        <label for="inventory_threshold">Inventory Threshold</label>
+        <input type="number" id="inventory_threshold" required>
+
+        <label for="notification_enabled">Enable Notifications</label>
+        <input type="checkbox" id="notification_enabled">
+
+        <label for="notification_email">Notification Email</label>
+        <input type="email" id="notification_email" required>
+
+        <label for="notification_frequency">Notification Frequency</label>
+        <input type="text" id="notification_frequency" required>
+
+        <label for="default_currency">Default Currency</label>
+        <input type="text" id="default_currency" required>
+
+        <button type="submit">Update System Configuration</button>
+    </form>
+
+    <h1>Inventory Configuration</h1>
+    <form id="inventory-config-form">
+        <label for="reorder_level">Reorder Level</label>
+        <input type="number" id="reorder_level" required>
+
+        <label for="automatic_stock_updates">Enable Automatic Stock Updates</label>
+        <input type="checkbox" id="automatic_stock_updates">
+
+        <label for="stock_warning_enabled">Enable Stock Warning</label>
+        <input type="checkbox" id="stock_warning_enabled">
+
+        <label for="stock_warning_threshold">Stock Warning Threshold</label>
+        <input type="number" id="stock_warning_threshold" required>
+
+        <button type="submit">Update Inventory Configuration</button>
+    </form>
+
+    <script src="/static/js/script.js"></script>
+</body>
+</html>

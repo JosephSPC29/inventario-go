@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/products')
+                .then(response => response.json())
+                .then(data => {
+                    const productList = document.getElementById('product-list');
+                    data.forEach(product => {
+                        const listItem = document.createElement('li');
+                        listItem.innerHTML = `${product.name} - $${product.price}`;
+                        productList.appendChild(listItem);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching products:', error);
+                });
+        });
+    </script>
+</head>
+<body>
+    <h1>Product List</h1>
+
+    <ul id="product-list">
+    </ul>
+
+    <script src="/static/js/script.js"></script>
+</body>
+</html>

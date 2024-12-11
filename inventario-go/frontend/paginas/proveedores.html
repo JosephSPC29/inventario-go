@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suppliers</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/suppliers')
+                .then(response => response.json())
+                .then(data => {
+                    const suppliersList = document.getElementById('suppliers-list');
+                    data.forEach(supplier => {
+                        const listItem = document.createElement('li');
+                        listItem.innerHTML = `Name: ${supplier.name}, Contact: ${supplier.contact_info}, Rating: ${supplier.rating}`;
+                        suppliersList.appendChild(listItem);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching suppliers:', error);
+                });
+
+            document.getElementById('supplier-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const name = document.getElementById('name').value;
+                const contactInfo = document.getElementById('contact-info').value;
+                const rating = document.getElementById('rating').value;
+
+                const supplierData = {
+                    name: name,
+                    contact_info: contactInfo,
+                    rating: parseFloat(rating),
+                };
+
+                fetch('/suppliers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(supplierData),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Supplier created successfully!');
+                    const suppliersList = document.getElementById('suppliers-list');
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `Name: ${name}, Contact: ${contactInfo}, Rating: ${rating}`;
+                    suppliersList.appendChild(listItem);
+                    document.getElementById('supplier-form').reset();
+                })
+                .catch(error => {
+                    console.error('Error creating supplier:', error);
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Suppliers List</h1>
+
+    <ul id="suppliers-list">
+    </ul>
+
+    <h2>Create a Supplier</h2>
+    <form id="supplier-form">
+        <label for="name">Name</label>
+        <input type="text" id="name" required>
+
+        <label for="contact-info">Contact Information</label>
+        <input type="text" id="contact-info" required>
+
+        <label for="rating">Rating</label>
+        <input type="number" id="rating" required step="0.1" min="0" max="5">
+
+        <button type="submit">Add Supplier</button>
+    </form>
+
+    <script src="/static/js/script.js"></script>
+</body>
+</html>

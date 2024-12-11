@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/reports')
+                .then(response => response.json())
+                .then(data => {
+                    const reportList = document.getElementById('report-list');
+                    data.forEach(item => {
+                        const listItem = document.createElement('li');
+                        listItem.innerHTML = `Title: ${item.title}, Date: ${item.date}, Content: ${item.content}`;
+                        reportList.appendChild(listItem);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching reports:', error);
+                });
+
+            document.getElementById('report-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const title = document.getElementById('title').value;
+                const content = document.getElementById('content').value;
+                const date = document.getElementById('date').value;
+
+                const reportData = {
+                    title: title,
+                    content: content,
+                    date: date,
+                };
+
+                fetch('/reports', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(reportData),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Report created successfully!');
+                    const reportList = document.getElementById('report-list');
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `Title: ${title}, Date: ${date}, Content: ${content}`;
+                    reportList.appendChild(listItem);
+                    document.getElementById('report-form').reset();
+                })
+                .catch(error => {
+                    console.error('Error creating report:', error);
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Reports List</h1>
+
+    <ul id="report-list">
+    </ul>
+
+    <h2>Create a Report</h2>
+    <form id="report-form">
+        <label for="title">Title</label>
+        <input type="text" id="title" required>
+
+        <label for="content">Content</label>
+        <textarea id="content" required></textarea>
+
+        <label for="date">Date</label>
+        <input type="date" id="date" required>
+
+        <button type="submit">Add Report</button>
+    </form>
+
+    <script src="/static/js/script.js"></script>
+</body>
+</html>

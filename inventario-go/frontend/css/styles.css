@@ -1,0 +1,45 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #000000;
+  }
+  
+  header {
+    background-color: #ca0606;
+    color: #dbd3d3;
+    padding: 10px 20px;
+  }
+  
+  header h1 {
+    margin: 0;
+  }
+  
+  header nav ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  header nav ul li {
+    display: inline;
+    margin-right: 10px;
+  }
+  
+  main {
+    padding: 20px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  table, th, td {
+    border: 1px solid #000000;
+  }
+  
+  th, td {
+    padding: 10px;
+    text-align: left;
+  }
+  

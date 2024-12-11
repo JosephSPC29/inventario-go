@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Details</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const invoiceID = urlParams.get('id');
+            
+            if (invoiceID) {
+                fetch(`/invoices/${invoiceID}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('invoice_id').textContent = data.id;
+                        document.getElementById('sale_id').textContent = data.sale_id;
+                        document.getElementById('invoice_date').textContent = data.date;
+                        document.getElementById('invoice_total').textContent = data.total;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching invoice:', error);
+                    });
+            } else {
+                fetch('/invoices')
+                    .then(response => response.json())
+                    .then(data => {
+                        const invoicesList = document.getElementById('invoices-list');
+                        data.forEach(invoice => {
+                            const listItem = document.createElement('li');
+                            listItem.textContent = `Invoice ID: ${invoice.id}, Sale ID: ${invoice.sale_id}, Total: ${invoice.total}`;
+                            invoicesList.appendChild(listItem);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching invoices:', error);
+                    });
+            }
+        });
+    </script>
+</head>
+<body>
+    <h1>Invoice Details</h1>
+    <div id="invoice-details">
+        <p><strong>Invoice ID:</strong> <span id="invoice_id"></span></p>
+        <p><strong>Sale ID:</strong> <span id="sale_id"></span></p>
+        <p><strong>Invoice Date:</strong> <span id="invoice_date"></span></p>
+        <p><strong>Total:</strong> $<span id="invoice_total"></span></p>
+    </div>
+
+    <h2>All Invoices</h2>
+    <ul id="invoices-list"></ul>
+
+    <script src="/static/js/script.js"></script>
+</body>
+</html>

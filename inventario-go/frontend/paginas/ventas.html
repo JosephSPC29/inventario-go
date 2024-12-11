@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/sales')
+                .then(response => response.json())
+                .then(data => {
+                    const salesList = document.getElementById('sales-list');
+                    data.forEach(sale => {
+                        const listItem = document.createElement('li');
+                        listItem.innerHTML = `Product: ${sale.product_name}, Quantity: ${sale.quantity}, Sale Price: $${sale.sale_price}`;
+                        salesList.appendChild(listItem);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching sales:', error);
+                });
+
+            document.getElementById('sale-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const productName = document.getElementById('product-name').value;
+                const quantity = document.getElementById('quantity').value;
+                const salePrice = document.getElementById('sale-price').value;
+
+                const saleData = {
+                    product_name: productName,
+                    quantity: parseInt(quantity),
+                    sale_price: parseFloat(salePrice),
+                };
+
+                fetch('/sales', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(saleData),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Sale created successfully!');
+                    const salesList = document.getElementById('sales-list');
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `Product: ${productName}, Quantity: ${quantity}, Sale Price: $${salePrice}`;
+                    salesList.appendChild(listItem);
+                    document.getElementById('sale-form').reset();
+                })
+                .catch(error => {
+                    console.error('Error creating sale:', error);
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Sales List</h1>
+
+    <ul id="sales-list">
+    </ul>
+
+    <h2>Create a Sale</h2>
+    <form id="sale-form">
+        <label for="product-name">Product Name</label>
+        <input type="text" id="product-name" required>
+
+        <label for="quantity">Quantity</label>
+        <input type="number" id="quantity" required>
+
+        <label for="sale-price">Sale Price</label>
+        <input type="number" id="sale-price" required step="0.01">
+
+        <button type="submit">Add Sale</button>
+    </form>
+
+    <scrip
